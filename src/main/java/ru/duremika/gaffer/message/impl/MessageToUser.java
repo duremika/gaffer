@@ -6,8 +6,8 @@ import lombok.Data;
 import ru.duremika.gaffer.message.Message;
 
 @Data
-@JsonTypeName("ANSWER_TO_USER")
-public class AnswerToUser implements Message {
+@JsonTypeName("MESSAGE_TO_USER")
+public class MessageToUser implements Message {
     @JsonProperty
     private final String text;
 }
