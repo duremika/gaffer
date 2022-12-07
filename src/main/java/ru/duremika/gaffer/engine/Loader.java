@@ -10,25 +10,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class Loader {
     private final YAMLMapper yamlMapper;
     public List<Classifier> classifiers;
-    public List<Scenario> scenarios;
+    public Map<String, Scenario> scenarios;
 
     public Loader(YAMLMapper yamlMapper) {
         this.yamlMapper = yamlMapper;
         classifiers = loadClassifiers().stream()
                 .filter(Classifier::isEnabled)
                 .collect(Collectors.toList());
-        scenarios = loadScenarios().stream()
-                .filter(Scenario::isEnabled)
-                .collect(Collectors.toList());
+        scenarios = loadScenarios();
 
     }
 
@@ -45,20 +41,24 @@ public class Loader {
         }
     }
 
-    public List<Scenario> loadScenarios() {
+    public Map<String, Scenario> loadScenarios() {
         File folderScenarios = new File(Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
                 .getResource("static/scenarios")).getFile());
         File[] files = Objects.requireNonNull(folderScenarios.listFiles());
-        List<Scenario> result = new ArrayList<>();
+        Map<String, Scenario> result = new HashMap<>();
         for (File file : files) {
             try (InputStream inputStream = Files.newInputStream(Paths.get(file.getPath()))) {
-                Scenario scenario = yamlMapper.readValue(inputStream, Scenario.class);
-                result.add(scenario);
+                Map<String, Scenario> scenario = yamlMapper.readValue(
+                        inputStream,
+                        yamlMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Scenario.class)
+                );
+                result.putAll(scenario);
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
+        result.entrySet().removeIf(s -> !s.getValue().isEnabled());
         return result;
     }
 }

@@ -1,108 +1,108 @@
-scenario: hello
-start_node: save_name
-scenario_nodes:
-  save_name:
-    fields:
-      name:
-        filler:
-          type: original_text
-        questions:
-          - type: answer_to_user
-            answer:
-              - Stop traveller, what's your name?
-              - What is your name, hero of these lands?
-            buttons:
-              - - Donald
-                - James
-              - - Steven
-                - William
-    available_nodes:
-      - save_city
-  save_city:
-    requirement:
-      type: field_comparison
-      scenario: hello
-      node: save_name
-      field: name
-      operator:
-        type: exists
-    fields:
-      city:
-        filler:
-          type: composite
-          fillers:
-            - type: intersection
-              cases:
-                Seann Stump:
-                  - Seann Stump
-                  - Old Stump
-                An T-Asal Grove:
+hello:
+  start_node: save_name
+  scenario_nodes:
+    save_name:
+      fields:
+        name:
+          filler:
+            type: original_text
+          questions:
+            - type: answer_to_user
+              answer:
+                - Stop traveller, what's your name?
+                - What is your name, hero of these lands?
+              buttons:
+                - - Donald
+                  - James
+                - - Steven
+                  - William
+      available_nodes:
+        - save_city
+    save_city:
+      requirement:
+        type: field_comparison
+        scenario: hello
+        node: save_name
+        field: name
+        operator:
+          type: exists
+      fields:
+        city:
+          filler:
+            type: composite
+            fillers:
+              - type: intersection
+                cases:
+                  Seann Stump:
+                    - Seann Stump
+                    - Old Stump
+                  An T-Asal Grove:
+                    - An T-Asal Grove
+                    - Donkey Grove
+          questions:
+            - type: answer_to_user
+              answer:
+                - Where are you from?
+              buttons:
+                - - Seann Stump
                   - An T-Asal Grove
-                  - Donkey Grove
-        questions:
-          - type: answer_to_user
-            answer:
-              - Where are you from?
-            buttons:
-              - - Seann Stump
-                - An T-Asal Grove
-    available_nodes:
-      - James from Seann Stump
-      - William from An T-Asal Grove
-      - other
-  James from Seann Stump:
-    requirement:
-      type: and
-      requirements:
-        - type: field_comparison
-          scenario: hello
-          node: save_name
-          field: name
-          operator:
-            type: equal
-            value: James
-        - type: field_comparison
-          scenario: hello
-          node: save_city
-          field: city
-          operator:
-            type: equal
-            value: Seann Stump
-    actions:
-      - type: answer_to_user
-        answer:
-          - Hello, James from Seann Stump!
-  William from An T-Asal Grove:
-    requirement:
-      type: and
-      requirements:
-        - type: field_comparison
-          scenario: hello
-          node: save_name
-          field: name
-          operator:
-            type: equal
-            value: William
-        - type: field_comparison
-          scenario: hello
-          node: save_city
-          field: city
-          operator:
-            type: equal
-            value: An T-Asal Grove
-    actions:
-      - type: answer_to_user
-        answer:
-          - Hello, William from An T-Asal Grove!
-  other:
-    requirement:
-      type: field_comparison
-      scenario: hello
-      node: save_city
-      field: city
-      operator:
-        type: exists
-    actions:
-      - type: answer_to_user
-        answer:
-          - Hail brave {{ hello.save_name.name }} from glorious {{ hello.save_city.city }}!
+      available_nodes:
+        - James from Seann Stump
+        - William from An T-Asal Grove
+        - other
+    James from Seann Stump:
+      requirement:
+        type: and
+        requirements:
+          - type: field_comparison
+            scenario: hello
+            node: save_name
+            field: name
+            operator:
+              type: equal
+              value: James
+          - type: field_comparison
+            scenario: hello
+            node: save_city
+            field: city
+            operator:
+              type: equal
+              value: Seann Stump
+      actions:
+        - type: answer_to_user
+          answer:
+            - Hello, James from Seann Stump!
+    William from An T-Asal Grove:
+      requirement:
+        type: and
+        requirements:
+          - type: field_comparison
+            scenario: hello
+            node: save_name
+            field: name
+            operator:
+              type: equal
+              value: William
+          - type: field_comparison
+            scenario: hello
+            node: save_city
+            field: city
+            operator:
+              type: equal
+              value: An T-Asal Grove
+      actions:
+        - type: answer_to_user
+          answer:
+            - Hello, William from An T-Asal Grove!
+    other:
+      requirement:
+        type: field_comparison
+        scenario: hello
+        node: save_city
+        field: city
+        operator:
+          type: exists
+      actions:
+        - type: answer_to_user
+          answer:
+            - Hail brave {{ hello.save_name.name }} from glorious {{ hello.save_city.city }}!

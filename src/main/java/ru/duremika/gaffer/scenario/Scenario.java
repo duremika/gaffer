@@ -13,9 +13,6 @@ import java.util.Map;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Scenario {
-    @JsonProperty("scenario")
-    private String name;
-
     @JsonProperty
     private boolean enabled = true;
 
@@ -29,6 +26,9 @@ public class Scenario {
     public static class Node {
         @JsonProperty
         private Requirement requirement;
+
+        @JsonProperty
+        private List<Action> actions;
 
         @JsonProperty("available_nodes")
         private List<String> availableNodes;

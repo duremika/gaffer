@@ -16,12 +16,16 @@ public class MessageService {
         for (Classifier classifier : loader.classifiers) {
             try {
                 if (classifier.getRequirement().check(message)) {
-                    break;
+                    runScenario(classifier.getScenario());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return new MessageToUser("I do not understand you");
+    }
+
+    private void runScenario(String scenario) {
+        
     }
 }
