@@ -8,7 +8,6 @@ import ru.duremika.gaffer.requirement.Requirement;
 import ru.duremika.gaffer.requirement.exception.NotApplicableRequirementException;
 
 import java.util.List;
-import java.util.Map;
 
 @JsonTypeName("substrings_in_message")
 public class SubstringsInMessage implements Requirement {
@@ -16,7 +15,7 @@ public class SubstringsInMessage implements Requirement {
     List<String> substrings;
 
     @Override
-    public boolean check(Message message, Map<String, Object> args) throws NotApplicableRequirementException {
+    public boolean check(Message message) throws NotApplicableRequirementException {
         if (!(message instanceof MessageFromUser)) {
             throw new NotApplicableRequirementException("requirement SubstringsInMessage are used only with the MessageFromUser");
         }
