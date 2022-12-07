@@ -1,0 +1,14 @@
+- scenario: hello
+  enabled: true
+  requirement:
+    type: substrings_in_message
+    substrings:
+      - hi
+      - hey
+      - hello
+- scenario: hello
+  enabled: true
+  requirement:
+    type: substrings_in_message
+    substrings:
+      - yo
