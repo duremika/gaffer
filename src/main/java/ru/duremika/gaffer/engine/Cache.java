@@ -2,7 +2,7 @@ package ru.duremika.gaffer.engine;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,12 +10,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@ToString
+@Component
 public class Cache<K, V> {
     private static final long DEFAULT_LIFE_TIME = TimeUnit.DAYS.toMillis(1);
 
     private volatile ConcurrentHashMap<Key, V> globalMap;
-    @ToString.Exclude
     private final ScheduledExecutorService scheduler;
 
     {
@@ -29,7 +28,6 @@ public class Cache<K, V> {
     public Cache() {
         Runnable command = () -> {
             long now = System.currentTimeMillis();
-            System.out.println(now);
             for (Key key : globalMap.keySet()) {
                 if (!key.isLive(now)) {
                     globalMap.remove(key);
@@ -84,11 +82,6 @@ public class Cache<K, V> {
 
         public boolean isLive(long currentTimeMillis) {
             return currentTimeMillis < lifeTime;
-        }
-
-        @Override
-        public String toString() {
-            return key.toString();
         }
     }
 }

@@ -1,10 +1,13 @@
 package ru.duremika.gaffer.config;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.reflections.Reflections;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.duremika.gaffer.action.Action;
+import ru.duremika.gaffer.filler.Filler;
 import ru.duremika.gaffer.message.Message;
 import ru.duremika.gaffer.requirement.Requirement;
 
@@ -17,26 +20,23 @@ public class JacksonConfiguration {
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerSubtypes(getAllMessages());
+        objectMapper.registerSubtypes(getAll(Message.class, "ru.duremika.gaffer.message"));
         return objectMapper;
     }
 
     @Bean
     public YAMLMapper yamlMapper() {
-        YAMLMapper yamlMapper = new YAMLMapper();
-        yamlMapper.registerSubtypes(getAllRequirements());
-        return yamlMapper;
+        return YAMLMapper.builder()
+                .registerSubtypes(getAll(Requirement.class, "ru.duremika.gaffer.requirement"))
+                .registerSubtypes(getAll(Filler.class, "ru.duremika.gaffer.filler"))
+                .registerSubtypes(getAll(Action.class, "ru.duremika.gaffer.action"))
+                .disable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+                .build();
     }
 
-    private Collection<Class<?>> getAllMessages() {
-        Reflections reflections = new Reflections("ru.duremika.gaffer.message");
-        final Set<Class<? extends Message>> subTypesOfMessage = reflections.getSubTypesOf(Message.class);
-        return new HashSet<>(subTypesOfMessage);
-    }
-    
-    private static Collection<Class<?>> getAllRequirements() {
-        Reflections reflections = new Reflections("ru.duremika.gaffer.requirement");
-        final Set<Class<? extends Requirement>> subTypesOfRequirement = reflections.getSubTypesOf(Requirement.class);
+    private static <T> Collection<Class<?>> getAll(Class<T> tClass, String path) {
+        Reflections reflections = new Reflections(path);
+        final Set<Class<? extends T>> subTypesOfRequirement = reflections.getSubTypesOf(tClass);
         return new HashSet<>(subTypesOfRequirement);
     }
 }

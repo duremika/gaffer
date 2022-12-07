@@ -10,4 +10,7 @@ import ru.duremika.gaffer.message.Message;
 public class MessageFromUser implements Message {
     @JsonProperty
     private String text;
+
+    @JsonProperty("user_id")
+    private String userId;
 }

@@ -10,6 +10,6 @@ public class Classifier {
     private String scenario;
     @JsonProperty
     private boolean enabled;
-    @JsonProperty
+    @JsonProperty(required = true)
     private Requirement requirement;
 }

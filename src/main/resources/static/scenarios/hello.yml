@@ -7,15 +7,15 @@ scenario_nodes:
         filler:
           type: original_text
         questions:
-          type: MESSAGE_TO_USER
-          answer:
-            - Stop traveller, what's your name?
-            - What is your name, hero of these lands?
-          buttons:
-            - - Donald
-              - James
-            - - Steven
-              - William
+          - type: answer_to_user
+            answer:
+              - Stop traveller, what's your name?
+              - What is your name, hero of these lands?
+            buttons:
+              - - Donald
+                - James
+              - - Steven
+                - William
     available_nodes:
       - save_city
   save_city:
@@ -40,12 +40,12 @@ scenario_nodes:
                   - An T-Asal Grove
                   - Donkey Grove
         questions:
-          type: MESSAGE_TO_USER
-          answer:
-            - Where are you from?
-          buttons:
-            - Seann Stump
-            - An T-Asal Grove
+          - type: answer_to_user
+            answer:
+              - Where are you from?
+            buttons:
+              - - Seann Stump
+                - An T-Asal Grove
     available_nodes:
       - James from Seann Stump
       - William from An T-Asal Grove
@@ -69,9 +69,9 @@ scenario_nodes:
             type: equal
             value: Seann Stump
     actions:
-      type: MESSAGE_TO_USER
-      answer:
-        - Hello, James from Seann Stump!
+      - type: answer_to_user
+        answer:
+          - Hello, James from Seann Stump!
   William from An T-Asal Grove:
     requirement:
       type: and
@@ -91,9 +91,9 @@ scenario_nodes:
             type: equal
             value: An T-Asal Grove
     actions:
-      type: MESSAGE_TO_USER
-      answer:
-        - Hello, William from An T-Asal Grove!
+      - type: answer_to_user
+        answer:
+          - Hello, William from An T-Asal Grove!
   other:
     requirement:
       type: field_comparison
@@ -103,6 +103,6 @@ scenario_nodes:
       operator:
         type: exists
     actions:
-      type: MESSAGE_TO_USER
-      answer:
-        - Hail brave {{ hello.save_name.name }} from glorious {{ hello.save_city.city }}!
+      - type: answer_to_user
+        answer:
+          - Hail brave {{ hello.save_name.name }} from glorious {{ hello.save_city.city }}!

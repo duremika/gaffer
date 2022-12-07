@@ -16,7 +16,6 @@ public class MessageService {
         for (Classifier classifier : loader.classifiers) {
             try {
                 if (classifier.getRequirement().check(message)) {
-                    System.out.println(classifier.getScenario());
                     break;
                 }
             } catch (Exception e) {

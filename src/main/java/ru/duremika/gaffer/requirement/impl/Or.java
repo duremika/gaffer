@@ -9,19 +9,18 @@ import ru.duremika.gaffer.requirement.exception.NotApplicableRequirementExceptio
 
 import java.util.List;
 
-@JsonTypeName("substrings_in_message")
-public class SubstringsInMessage implements Requirement {
+@JsonTypeName("or")
+public class Or implements Requirement {
     @JsonProperty
-    List<String> substrings;
+    List<Requirement> requirements;
 
     @Override
-    public boolean check(Message message) throws NotApplicableRequirementException {
+    public boolean check(Message message) throws Exception {
         if (!(message instanceof MessageFromUser)) {
-            throw new NotApplicableRequirementException("requirement \"substrings_in_message\" are used only with the MessageFromUser");
+            throw new NotApplicableRequirementException("requirement \"or\" are used only with the MessageFromUser");
         }
-        String textMessage = ((MessageFromUser) message).getText();
-        for (String substring : substrings) {
-            if (textMessage.contains(substring)) {
+        for (Requirement requirement : requirements) {
+            if (requirement.check(message)) {
                 return true;
             }
         }
