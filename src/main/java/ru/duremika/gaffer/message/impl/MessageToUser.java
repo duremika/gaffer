@@ -19,12 +19,14 @@ public class MessageToUser extends Message {
 
     @Override
     public String toString() {
-        return text + (buttons == null || buttons.isEmpty() ?
+        return "________________________________________\n"
+                + text + (buttons == null || buttons.isEmpty() ?
                 "" :
                 "\n\n" + buttons.stream()
                         .map(buttonsRow -> buttonsRow.stream()
                                 .map(button -> "[  " + button + "  ]")
                                 .collect(Collectors.joining(" | ")))
-                        .collect(Collectors.joining("\n")));
+                        .collect(Collectors.joining("\n")))
+                + "\n________________________________________";
     }
 }

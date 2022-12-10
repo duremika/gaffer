@@ -34,14 +34,25 @@ public class MessageHandler {
             if (scenarioName == null) {
                 return defaultAnswer();
             }
-            log.info("current scenario: {}", scenarioName);
             Scenario currentScenario = loader.scenarios.get(scenarioName);
+            if (currentScenario == null) {
+                log.info("scenario: {} is not exists", scenarioName);
+                return defaultAnswer();
+            }
+            log.info("current scenario: {}", scenarioName);
             userState.setCurrentScenario(scenarioName);
             userState.setCurrentNode(currentScenario.getStartNode());
             Map<String, Map<String, Object>> scenarioState = currentScenario.getViewState();
             userState.getScenarios().put(scenarioName, scenarioState);
         }
-        return continueScenario();
+        String currentNodeName = userState.getCurrentNode();
+        log.info("current node: {}", currentNodeName);
+        fillByFiller();
+        checkAvailable();
+        Message reply = getAnswer();
+        reply.setUserId(message.getUserId());
+        log.info("answer: \n{}", reply);
+        return reply;
     }
 
     private String classify() {
@@ -59,16 +70,6 @@ public class MessageHandler {
             }
         }
         return null;
-    }
-
-    private Message continueScenario() {
-        String currentNodeName = userState.getCurrentNode();
-        log.info("current node: {}", currentNodeName);
-        fillByFiller();
-        checkAvailable();
-        Message message = getAnswer();
-        log.info("answer: \n{}", message);
-        return message;
     }
 
     private void fillByFiller() {
@@ -171,12 +172,17 @@ public class MessageHandler {
                 e.printStackTrace();
             }
         }
+        if (messageList.size() == 0) {
+            return null;
+        }
+        userState.setCurrentScenario(null);
+        userState.setCurrentNode(null);
+        userState.setCurrentField(null);
         if (messageList.size() == 1) {
             return messageList.get(0);
-        } else if (messageList.size() > 1) {
+        } else {
             return new MultipartMessage(messageList);
         }
-        return null;
     }
 
     private Message defaultAnswer() {
