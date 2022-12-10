@@ -1,8 +1,8 @@
 package ru.duremika.gaffer.engine;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import org.springframework.stereotype.Component;
 import ru.duremika.gaffer.classifier.Classifier;
+import ru.duremika.gaffer.config.JacksonConfiguration;
 import ru.duremika.gaffer.scenario.Scenario;
 
 import java.io.File;
@@ -10,31 +10,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
-@Component
 public class Loader {
     private final YAMLMapper yamlMapper;
-    public List<Classifier> classifiers;
+    public Map<String, Classifier> classifiers;
     public Map<String, Scenario> scenarios;
 
-    public Loader(YAMLMapper yamlMapper) {
-        this.yamlMapper = yamlMapper;
-        classifiers = loadClassifiers().stream()
-                .filter(Classifier::isEnabled)
-                .collect(Collectors.toList());
+    public Loader() {
+        this.yamlMapper = JacksonConfiguration.yamlMapper();
+        classifiers = loadClassifiers();
         scenarios = loadScenarios();
 
     }
 
-    public List<Classifier> loadClassifiers() {
+    public Map<String, Classifier> loadClassifiers() {
         try (InputStream inputStream = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("static/classifiers/classifiers.yml")) {
-            return yamlMapper.readValue(
+            Map<String, Classifier> classifierMap = yamlMapper.readValue(
                     inputStream,
-                    yamlMapper.getTypeFactory().constructCollectionType(List.class, Classifier.class)
+                    yamlMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Classifier.class)
             );
+            classifierMap.entrySet().removeIf(s -> !s.getValue().isEnabled());
+            return classifierMap;
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

@@ -2,8 +2,10 @@ package ru.duremika.gaffer.requirement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 public class Operator {
     @JsonProperty
     Type type;
@@ -12,8 +14,9 @@ public class Operator {
     String value;
 
     @RequiredArgsConstructor
-    enum Type {
+    public enum Type {
         EXISTS("exists"),
+        NOT_EXISTS("not_exists"),
         EQUAL("equal"),
         NOT_EQUAL("not_equal"),
         MORE("more"),

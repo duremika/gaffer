@@ -1,14 +1,17 @@
-- scenario: hello
+official greeting:
+  scenario: hello
+  enabled: true
+  requirement:
+    type: substrings_in_message
+    substrings:
+      - hello
+friendly greeting:
+  scenario: hello
   enabled: true
   requirement:
     type: substrings_in_message
     substrings:
       - hi
       - hey
-      - hello
-- scenario: hello
-  enabled: true
-  requirement:
-    type: substrings_in_message
-    substrings:
       - yo
+      - hiya

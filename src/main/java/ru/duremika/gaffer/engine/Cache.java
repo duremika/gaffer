@@ -2,7 +2,6 @@ package ru.duremika.gaffer.engine;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +9,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@Component
 public class Cache<K, V> {
     private static final long DEFAULT_LIFE_TIME = TimeUnit.DAYS.toMillis(1);
 
@@ -55,8 +53,13 @@ public class Cache<K, V> {
         expMap.forEach(this::put);
     }
 
-    public V get(K key) {
-        return globalMap.get(new Key(key));
+    public V getOrDefaultWithSave(K key, V defaultValue) {
+        V res = globalMap.get(new Key(key));
+        if (res == null) {
+            put(key, defaultValue);
+            res = defaultValue;
+        }
+        return res;
     }
 
     public V remove(K key) {
