@@ -3,15 +3,17 @@ package ru.duremika.gaffer.filler.impl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import ru.duremika.gaffer.dto.UserState;
 import ru.duremika.gaffer.filler.Filler;
 import ru.duremika.gaffer.message.impl.MessageFromUser;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+@Slf4j
 @RequiredArgsConstructor
+@Setter
 @JsonTypeName("intersection")
 public class Intersection implements Filler {
 
@@ -20,13 +22,16 @@ public class Intersection implements Filler {
 
     @Override
     public Object fill(UserState userState) {
-        List<String> messageWords = Arrays.asList( ((MessageFromUser) userState.getMessage()).getText().toLowerCase().split(" "));
-
+        String originalText = ((MessageFromUser) userState.getMessage()).getText();
+        List<String> messageTokens = normalize(originalText);
+        log.info("message tokens: {}", messageTokens);
         for (Map.Entry<String, List<String>> entry : cases.entrySet()) {
-            loop: for (String phraseFromCasses : entry.getValue()) {
-                String[] cassesWords = phraseFromCasses.split(" ");
-                for (String word : cassesWords) {
-                    if ( ! messageWords.contains(word.toLowerCase())) {
+            log.info("trying to find intersections for case: {}", entry.getKey());
+            loop: for (String phraseFromCases : entry.getValue()) {
+                log.info("phrase from cases: {}", phraseFromCases);
+                List<String> casesWords = normalize(phraseFromCases);
+                for (String word : casesWords) {
+                    if ( ! messageTokens.contains(word)) {
                         continue loop;
                     }
                 }
@@ -34,6 +39,17 @@ public class Intersection implements Filler {
             }
         }
         return null;
+    }
+
+    private List<String> normalize(String raw) {
+        List<String> res = new ArrayList<>();
+        StringTokenizer stringTokenizer = new StringTokenizer(raw, " \t\n\r:,.!?\"'");
+        while (stringTokenizer.hasMoreTokens()) {
+            String token = stringTokenizer.nextToken();
+            token = token.toLowerCase();
+            res.add(token);
+        }
+        return res;
     }
 
     @Override
