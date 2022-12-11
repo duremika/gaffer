@@ -1,0 +1,11 @@
+default:
+  start_node: start
+  scenario_nodes:
+    start:
+      available_nodes:
+        - next
+    next:
+      actions:
+        - type: answer_to_user
+          answer:
+            - I'm limited in my answers, try saying it differently

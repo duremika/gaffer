@@ -1,0 +1,24 @@
+test_classifier:
+  scenario: test
+  enabled: true
+  requirement:
+    type: substrings_in_message
+    substrings:
+      - test
+official_greeting:
+  scenario: hello
+  enabled: true
+  requirement:
+    type: substrings_in_message
+    substrings:
+      - hello
+friendly_greeting:
+  scenario: hello
+  enabled: true
+  requirement:
+    type: substrings_in_message
+    substrings:
+      - hi
+      - hey
+      - yo
+      - hiya
