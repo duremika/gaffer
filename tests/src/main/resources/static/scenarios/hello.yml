@@ -105,7 +105,7 @@ hello:
       actions:
         - type: answer_to_user
           answer:
-            - Hail brave {{ hello.save_name.name }} from glorious {{ hello.save_city.city }}!
+            - Hail brave [[${hello.save_name.name}]] from glorious [[${hello.save_city.city}]]!
 test:
   start_node: start
   scenario_nodes:

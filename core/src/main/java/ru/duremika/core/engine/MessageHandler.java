@@ -21,11 +21,13 @@ import java.util.stream.Collectors;
 public class MessageHandler {
     private final Loader loader;
     private final Cache<String, UserState> cache;
+    private final TemplateProcessor templateProcessor;
     private UserState userState;
 
     {
         this.loader = new Loader();
         this.cache = new Cache<>();
+        templateProcessor = new TemplateProcessor();
     }
 
 
@@ -52,7 +54,7 @@ public class MessageHandler {
         log.info("current node: {}", currentNodeName);
         fillByFiller();
         checkAvailable();
-        Message reply = getAnswer();
+        Message reply = templateProcessor.process(getAnswer(), userState);
         reply.setUserId(message.getUserId());
         log.info("answer: \n{}", reply);
         return reply;
