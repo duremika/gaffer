@@ -6,12 +6,15 @@ import ru.duremika.gaffer.classifier.Classifier;
 import ru.duremika.gaffer.dto.UserState;
 import ru.duremika.gaffer.filler.Filler;
 import ru.duremika.gaffer.message.Message;
+import ru.duremika.gaffer.message.impl.ErrorMessage;
 import ru.duremika.gaffer.message.impl.MessageFromUser;
-import ru.duremika.gaffer.message.impl.MessageToUser;
 import ru.duremika.gaffer.message.impl.MultipartMessage;
+import ru.duremika.gaffer.requirement.Requirement;
 import ru.duremika.gaffer.scenario.Scenario;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -100,7 +103,11 @@ public class MessageHandler {
             log.info("checking node: {}", availableNodeName);
             Scenario.Node availableNode = scenario.getScenarioNodes().get(availableNodeName);
             try {
-                boolean successCheck = availableNode.getRequirement().check(userState);
+                Requirement requirement = availableNode.getRequirement();
+                boolean successCheck = true;
+                if (requirement != null) {
+                    successCheck = requirement.check(userState);
+                }
                 if (successCheck) {
                     log.info("chosen node: {}", availableNodeName);
                     userState.setCurrentField(null);
@@ -124,7 +131,6 @@ public class MessageHandler {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
-        List<Message> messageList = new ArrayList<>();
         Message answerFromField = getAnswerFromQuestions(node, unfilledFieldsNames);
         if (answerFromField != null) {
             return answerFromField;
@@ -140,6 +146,7 @@ public class MessageHandler {
         List<Message> messageList = new ArrayList<>();
         for (String fieldName : unfilledFieldsNames) {
             userState.setCurrentField(fieldName);
+            log.info("ask questions for field: {}", fieldName);
             Scenario.Node.Field field = node.getFields().get(fieldName);
             for (Action action : field.getQuestions()) {
                 try {
@@ -187,6 +194,24 @@ public class MessageHandler {
 
     private Message defaultAnswer() {
         log.info("defaultAnswer");
-        return new MessageToUser("I do not understand you", Collections.singletonList(Collections.emptyList()));
+        String userId = userState.getMessage().getUserId();
+        Scenario defaultScenario = loader.scenarios.get("default");
+        if (defaultScenario == null) {
+            log.info("default scenario is not exists");
+            return new ErrorMessage(
+                    userId,
+                    1,
+                    "scenario with name \"default\" should always be in the project in case something goes wrong");
+        }
+        userState.setCurrentScenario("default");
+        userState.setCurrentNode(defaultScenario.getStartNode());
+        Map<String, Map<String, Object>> scenarioState = defaultScenario.getViewState();
+        userState.getScenarios().put("default", scenarioState);
+        fillByFiller();
+        checkAvailable();
+        Message reply = getAnswer();
+        reply.setUserId(userId);
+        log.info("answer: \n{}", reply);
+        return reply;
     }
 }
