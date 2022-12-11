@@ -3,7 +3,6 @@ package ru.duremika.gaffer.filler.impl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.duremika.gaffer.dto.UserState;
 import ru.duremika.gaffer.filler.Filler;
@@ -13,7 +12,6 @@ import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@Setter
 @JsonTypeName("intersection")
 public class Intersection implements Filler {
 
